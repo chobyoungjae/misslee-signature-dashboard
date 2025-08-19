@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // 사원번호 생성
     console.log('사원번호 생성 시작...');
     const lastEmployeeNumber = await GoogleSheetsService.getLastEmployeeNumber();
-    const employeeNumber = generateEmployeeNumber(lastEmployeeNumber);
+    const employeeNumber = generateEmployeeNumber(lastEmployeeNumber || undefined);
     console.log('생성된 사원번호:', employeeNumber);
 
     // 비밀번호 해시화
