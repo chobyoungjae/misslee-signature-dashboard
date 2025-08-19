@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     let personalSheetId = user.personalSheetId;
     if (!personalSheetId) {
       try {
-        personalSheetId = await GoogleSheetsService.getPersonalSheetIdByName(user.name);
+        personalSheetId = await GoogleSheetsService.getPersonalSheetIdByName(user.name) || undefined;
       } catch (error) {
         console.error('개인 스프레드시트 검색 실패:', error);
       }
