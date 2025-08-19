@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (!personalSheetId) {
       console.log('개인 스프레드시트 ID가 없어서 검색 중...', user.name);
       try {
-        personalSheetId = await GoogleSheetsService.getPersonalSheetIdByName(user.name);
+        personalSheetId = await GoogleSheetsService.getPersonalSheetIdByName(user.name) || undefined;
         if (personalSheetId) {
           console.log('기존 개인 스프레드시트 찾음:', personalSheetId);
           // 메인 스프레드시트의 사용자 정보 업데이트
