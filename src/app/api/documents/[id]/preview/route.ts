@@ -194,13 +194,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     console.error('=== 문서 미리보기 API 오류 ===');
     console.error('오류 타입:', typeof error);
-    console.error('오류 메시지:', error?.message);
+    console.error('오류 메시지:', (error as Error)?.message);
     console.error('전체 오류:', error);
 
     return NextResponse.json(
       {
         error: '문서 미리보기를 불러오는 중 오류가 발생했습니다.',
-        details: error?.message,
+        details: (error as Error)?.message,
       },
       { status: 500 }
     );
