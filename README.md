@@ -1,40 +1,45 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 미쓰리 서명 대시보드 📋
 
-## Getting Started
+한국어 문서 서명 워크플로우를 위한 Next.js 15 기반 대시보드 애플리케이션입니다.
 
-First, run the development server:
+## ✨ 주요 기능
+
+- 🔐 JWT 기반 사용자 인증
+- 📊 Google Sheets 연동 데이터 관리
+- ✍️ 전자서명 워크플로우 (팀장 → 검토 → 대표 서명)
+- 📱 PWA 지원 (오프라인 사용 가능)
+- 📄 PDF 문서 미리보기
+- 🔔 실시간 서명 상태 추적
+
+## 🚀 개발 서버 실행
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev --turbopack    # Turbopack을 사용한 빠른 개발 서버
+# 또는
+npm run dev               # 일반 개발 서버
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 결과를 확인하세요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📋 프로젝트 구조
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: Next.js 15 + TypeScript + Tailwind CSS 4.0
+- **인증**: JWT + bcryptjs
+- **데이터베이스**: Google Sheets API
+- **PWA**: Service Worker + Manifest
 
-## Learn More
+## 📚 더 알아보기
 
-To learn more about Next.js, take a look at the following resources:
+- [CLAUDE.md](./CLAUDE.md) - 프로젝트 상세 가이드
+- [SETUP_SHEETS.md](./SETUP_SHEETS.md) - Google Sheets 설정 방법
+- [Next.js 공식 문서](https://nextjs.org/docs)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠 기술 스택
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# misslee-signature-dashboard
->>>>>>> 5215fbe2c73e533bb2f800788b26fb928000fdcc
+- **Framework**: Next.js 15
+- **언어**: TypeScript
+- **스타일링**: Tailwind CSS 4.0
+- **인증**: JWT + bcryptjs
+- **API**: Google Sheets API
+- **PDF**: react-pdf
+- **PWA**: Service Worker
