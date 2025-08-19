@@ -70,14 +70,14 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('=== 문서 조회 API 오류 ===');
     console.error('오류 타입:', typeof error);
-    console.error('오류 메시지:', error?.message);
+    console.error('오류 메시지:', (error as Error)?.message);
     console.error('전체 오류:', error);
-    console.error('스택 트레이스:', error?.stack);
+    console.error('스택 트레이스:', (error as Error)?.stack);
     
     return NextResponse.json(
       { 
         error: '문서를 불러오는 중 오류가 발생했습니다.',
-        details: error?.message 
+        details: (error as Error)?.message 
       },
       { status: 500 }
     );

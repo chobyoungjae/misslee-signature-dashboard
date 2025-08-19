@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Sample document API error:', error);
     return NextResponse.json(
-      { error: '샘플 문서 추가 중 오류가 발생했습니다.', details: error?.message },
+      { error: '샘플 문서 추가 중 오류가 발생했습니다.', details: (error as Error)?.message },
       { status: 500 }
     );
   }

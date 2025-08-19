@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'PDF 파일을 불러오는 중 오류가 발생했습니다.',
-        details: error?.message 
+        details: (error as Error)?.message 
       },
       { status: 500 }
     );

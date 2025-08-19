@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('=== 회원가입 오류 상세 정보 ===');
-    console.error('오류 타입:', error?.constructor?.name);
+    console.error('오류 타입:', (error as Error)?.constructor?.name);
     console.error('오류 메시지:', (error as Error)?.message);
     console.error('전체 오류:', error);
     console.error('스택 트레이스:', (error as Error)?.stack);

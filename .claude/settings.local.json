@@ -12,7 +12,10 @@
       "Bash(rmdir:*)",
       "Bash(rm:*)",
       "Bash(npm install:*)",
-      "mcp__smithery-sequential-thinking__sequentialthinking"
+      "mcp__smithery-sequential-thinking__sequentialthinking",
+      "Bash(find:*)",
+      "Bash(powershell:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

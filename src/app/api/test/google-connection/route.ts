@@ -54,15 +54,15 @@ export async function GET(request: NextRequest) {
 
   } catch (error: any) {
     console.error('=== Google API 연결 테스트 실패 ===');
-    console.error('오류 타입:', error?.constructor?.name);
-    console.error('오류 메시지:', error?.message);
-    console.error('오류 코드:', error?.code);
+    console.error('오류 타입:', (error as Error)?.constructor?.name);
+    console.error('오류 메시지:', (error as Error)?.message);
+    console.error('오류 코드:', (error as any)?.code);
     console.error('전체 오류:', error);
 
     return NextResponse.json({
       error: 'Google Sheets API 연결 실패',
-      details: error?.message,
-      code: error?.code,
+      details: (error as Error)?.message,
+      code: (error as any)?.code,
     }, { status: 500 });
   }
 }

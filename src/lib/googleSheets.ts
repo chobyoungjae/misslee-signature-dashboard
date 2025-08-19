@@ -136,9 +136,9 @@ export class GoogleSheetsService {
       return null;
     } catch (error) {
       console.error('=== 개인 스프레드시트 ID 검색 오류 ===');
-      console.error('오류 메시지:', error?.message);
+      console.error('오류 메시지:', (error as Error)?.message);
       console.error('전체 오류:', error);
-      throw new Error(`개인 스프레드시트 ID 검색 중 오류가 발생했습니다: ${error?.message}`);
+      throw new Error(`개인 스프레드시트 ID 검색 중 오류가 발생했습니다: ${(error as Error)?.message}`);
     }
   }
 
@@ -181,7 +181,7 @@ export class GoogleSheetsService {
       console.log('사용자를 찾을 수 없어 개인 스프레드시트 ID를 업데이트하지 못했습니다.');
     } catch (error) {
       console.error('개인 스프레드시트 ID 업데이트 오류:', error);
-      throw new Error(`개인 스프레드시트 ID 업데이트 중 오류가 발생했습니다: ${error?.message}`);
+      throw new Error(`개인 스프레드시트 ID 업데이트 중 오류가 발생했습니다: ${(error as Error)?.message}`);
     }
   }
 
@@ -282,9 +282,9 @@ export class GoogleSheetsService {
       return documents;
     } catch (error) {
       console.error('미서명 문서 조회 중 상세 오류:', error);
-      console.error('오류 스택:', error?.stack);
-      console.error('오류 메시지:', error?.message);
-      throw new Error(`문서 조회 중 오류가 발생했습니다: ${error?.message}`);
+      console.error('오류 스택:', (error as Error)?.stack);
+      console.error('오류 메시지:', (error as Error)?.message);
+      throw new Error(`문서 조회 중 오류가 발생했습니다: ${(error as Error)?.message}`);
     }
   }
 
@@ -338,7 +338,7 @@ export class GoogleSheetsService {
     } catch (error) {
       console.error('셀 이미지 정보 조회 오류:', error);
       // API 할당량 오류인 경우 특별 처리
-      if (error?.message?.includes('quota') || error?.message?.includes('rate')) {
+      if ((error as Error)?.message?.includes('quota') || (error as Error)?.message?.includes('rate')) {
         console.warn('API 할당량 오류로 인해 셀 메타데이터 조회를 건너뜁니다.');
       }
       return undefined;
@@ -424,7 +424,7 @@ export class GoogleSheetsService {
       console.error('배치 이미지 조회 오류:', error);
       
       // API 할당량 오류 감지
-      if (error?.message?.includes('quota') || error?.message?.includes('rate')) {
+      if ((error as Error)?.message?.includes('quota') || (error as Error)?.message?.includes('rate')) {
         console.warn('API 할당량 제한으로 인해 이미지 메타데이터 조회를 비활성화합니다.');
         this.isRateLimited = true;
         // 5분 후 다시 시도할 수 있도록 타이머 설정
