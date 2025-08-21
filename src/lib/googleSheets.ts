@@ -439,8 +439,14 @@ export class GoogleSheetsService {
   }
 
   // IMPORTRANGE 함수 결과에서 이미지 URL 추출
-  private static extractImageUrl(cellValue: string): string | undefined {
+  private static extractImageUrl(cellValue: any): string | undefined {
     if (!cellValue) return undefined;
+    
+    // cellValue가 문자열이 아닌 경우 처리
+    if (typeof cellValue !== 'string') {
+      console.log('cellValue가 문자열이 아님:', typeof cellValue, cellValue);
+      return undefined;
+    }
     
     console.log('이미지 URL 추출 시도:', cellValue);
     

@@ -66,13 +66,14 @@ export async function POST(request: NextRequest) {
     }
 
     // JWT 토큰 생성
+    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'fallback-secret';
     const token = jwt.sign(
       { 
         employeeNumber: user.employeeNumber,
         username: user.username,
         email: user.email,
       },
-      process.env.NEXTAUTH_SECRET || 'fallback-secret',
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 

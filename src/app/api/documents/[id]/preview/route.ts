@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   console.log('=== 문서 미리보기 API 시작 ===');

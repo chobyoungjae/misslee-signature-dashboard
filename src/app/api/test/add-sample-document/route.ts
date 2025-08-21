@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key';
 
 // 개발 환경에서만 사용할 테스트용 API
 export async function POST(request: NextRequest) {

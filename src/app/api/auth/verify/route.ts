@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'fallback-secret';
 
 export async function GET(request: NextRequest) {
   try {
