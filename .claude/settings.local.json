@@ -15,7 +15,11 @@
       "mcp__smithery-sequential-thinking__sequentialthinking",
       "Bash(find:*)",
       "Bash(powershell:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Read(/C:\\Users\\미쓰리\\.claude/**)",
+      "Bash(npm run lint)",
+      "Bash(npx next:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

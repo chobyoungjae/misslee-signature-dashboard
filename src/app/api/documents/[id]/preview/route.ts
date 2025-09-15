@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
+import { JWT_SECRET } from '@/lib/auth';
+import { handleAPIError, ErrorHandlers } from '@/lib/errorHandler';
+import { JWTPayload } from '@/types/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key';
+// JWT_SECRET은 이미 @/lib/auth에서 안전하게 가져왔습니다
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   console.log('=== 문서 미리보기 API 시작 ===');
@@ -16,17 +19,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     console.log('토큰 존재 여부:', !!token);
 
     if (!token) {
-      console.log('토큰이 없습니다');
-      return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+      return await ErrorHandlers.authentication('토큰이 없습니다', 'documents/preview/GET');
     }
 
-    let decoded;
+    let decoded: JWTPayload;
     try {
-      decoded = jwt.verify(token, JWT_SECRET) as any;
-      console.log('토큰 디코드 성공:', { username: decoded.username });
-    } catch (error) {
-      console.log('토큰 검증 실패:', error);
-      return NextResponse.json({ error: '유효하지 않은 토큰입니다.' }, { status: 401 });
+      decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    } catch (error: unknown) {
+      return await ErrorHandlers.authentication(error, 'documents/preview/GET');
     }
 
     const { id: documentId } = await params;
@@ -64,8 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     console.log('기존 형식으로 파싱된 정보:', { sheetId, rowIndex, rowIndexStr });
 
     if (!sheetId || isNaN(rowIndex)) {
-      console.log('잘못된 documentId 형식');
-      return NextResponse.json({ error: '유효하지 않은 문서 ID입니다.' }, { status: 400 });
+      return await ErrorHandlers.validation('유효하지 않은 문서 ID입니다', 'documents/preview/GET');
     }
 
     // 1단계: 개인 스프레드시트에서 해당 행의 O열(문서링크) 가져오기
@@ -78,14 +77,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     console.log('개인 시트 행 데이터:', JSON.stringify(personalSheetData, null, 2));
 
     if (!personalSheetData || personalSheetData.length === 0) {
-      return NextResponse.json({ error: '문서 데이터를 찾을 수 없습니다.' }, { status: 404 });
+      return await ErrorHandlers.notFound('문서 데이터를 찾을 수 없습니다', 'documents/preview/GET');
     }
 
     const documentLink = personalSheetData[0][14]; // O열 (0-based로 14번째)
     console.log('O열 문서링크:', documentLink);
 
     if (!documentLink) {
-      return NextResponse.json({ error: '문서 링크가 없습니다.' }, { status: 404 });
+      return await ErrorHandlers.notFound('문서 링크가 없습니다', 'documents/preview/GET');
     }
 
     // 2단계: O열 값이 Google Sheets URL인지 PDF 파일 ID인지 판단
@@ -109,7 +108,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       const gidMatch = documentLink.match(/gid=([0-9]+)/);
 
       if (!urlMatch) {
-        return NextResponse.json({ error: '유효하지 않은 문서 링크입니다.' }, { status: 400 });
+        return await ErrorHandlers.validation('유효하지 않은 문서 링크입니다', 'documents/preview/GET');
       }
 
       actualDocumentId = urlMatch[1];
@@ -183,26 +182,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       });
     } else {
       // 지원하지 않는 형식
-      return NextResponse.json(
-        {
-          error:
-            '지원하지 않는 문서 형식입니다. Google Sheets URL 또는 PDF 파일 ID를 사용해주세요.',
-        },
-        { status: 400 }
-      );
+      return await ErrorHandlers.validation('지원하지 않는 문서 형식입니다', 'documents/preview/GET');
     }
   } catch (error) {
-    console.error('=== 문서 미리보기 API 오류 ===');
-    console.error('오류 타입:', typeof error);
-    console.error('오류 메시지:', (error as Error)?.message);
-    console.error('전체 오류:', error);
-
-    return NextResponse.json(
-      {
-        error: '문서 미리보기를 불러오는 중 오류가 발생했습니다.',
-        details: (error as Error)?.message,
-      },
-      { status: 500 }
-    );
+    return await handleAPIError(error, 'documents/preview/GET');
   }
 }

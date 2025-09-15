@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
+import { JWT_SECRET, JWT_OPTIONS } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // JWT 토큰 생성
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'fallback-secret';
+    // JWT_SECRET은 이미 @/lib/auth에서 안전하게 가져왔습니다
     const token = jwt.sign(
       { 
         employeeNumber: user.employeeNumber,
@@ -74,11 +75,11 @@ export async function POST(request: NextRequest) {
         email: user.email,
       },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      JWT_OPTIONS
     );
 
     // 로그인 성공 응답 (비밀번호 제외)
-    const { hashedPassword, ...userWithoutPassword } = user;
+    const { hashedPassword: _, ...userWithoutPassword } = user;
     
     const response = NextResponse.json({
       message: '로그인 성공',

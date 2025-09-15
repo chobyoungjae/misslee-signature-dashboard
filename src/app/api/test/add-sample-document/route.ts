@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
+import { JWT_SECRET } from '@/lib/auth';
+import { handleAPIError, ErrorHandlers } from '@/lib/errorHandler';
+import { JWTPayload } from '@/types/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key';
+// JWT_SECRET은 이미 @/lib/auth에서 안전하게 가져왔습니다
 
 // 개발 환경에서만 사용할 테스트용 API
 export async function POST(request: NextRequest) {
   // 프로덕션 환경에서는 비활성화
   if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json(
-      { error: '이 API는 개발 환경에서만 사용할 수 있습니다.' },
-      { status: 403 }
-    );
+    return await ErrorHandlers.authorization('이 API는 개발 환경에서만 사용할 수 있습니다', 'test/add-sample-document/POST');
   }
 
   try {
@@ -19,30 +19,21 @@ export async function POST(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
     
     if (!token) {
-      return NextResponse.json(
-        { error: '로그인이 필요합니다.' },
-        { status: 401 }
-      );
+      return await ErrorHandlers.authentication('로그인이 필요합니다', 'test/add-sample-document/POST');
     }
 
-    let decoded;
+    let decoded: JWTPayload;
     try {
-      decoded = jwt.verify(token, JWT_SECRET) as any;
-    } catch (error) {
-      return NextResponse.json(
-        { error: '유효하지 않은 토큰입니다.' },
-        { status: 401 }
-      );
+      decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    } catch (error: unknown) {
+      return await ErrorHandlers.authentication(error, 'test/add-sample-document/POST');
     }
 
     // 사용자의 개인 스프레드시트 ID 가져오기
     const user = await GoogleSheetsService.getUserByLoginId(decoded.username);
     
     if (!user || !user.personalSheetId) {
-      return NextResponse.json(
-        { error: '사용자 정보 또는 개인 스프레드시트를 찾을 수 없습니다.' },
-        { status: 404 }
-      );
+      return await ErrorHandlers.notFound('사용자 정보 또는 개인 스프레드시트를 찾을 수 없습니다', 'test/add-sample-document/POST');
     }
 
     console.log('샘플 데이터 추가 대상 시트:', user.personalSheetId);
@@ -124,10 +115,6 @@ export async function POST(request: NextRequest) {
       personalSheetId: user.personalSheetId
     });
   } catch (error) {
-    console.error('Sample document API error:', error);
-    return NextResponse.json(
-      { error: '샘플 문서 추가 중 오류가 발생했습니다.', details: (error as Error)?.message },
-      { status: 500 }
-    );
+    return await handleAPIError(error, 'test/add-sample-document/POST');
   }
 }

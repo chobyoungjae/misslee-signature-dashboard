@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleSheetsService } from '@/lib/googleSheets';
+import { JWT_SECRET } from '@/lib/auth';
+import { JWTPayload } from '@/types/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'fallback-secret';
+// JWT_SECRET은 이미 @/lib/auth에서 안전하게 가져왔습니다
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,10 +18,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let decoded;
+    let decoded: JWTPayload;
     try {
-      decoded = jwt.verify(token, JWT_SECRET) as any;
-    } catch (error) {
+      decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    } catch (error: unknown) {
       return NextResponse.json(
         { error: '유효하지 않은 토큰입니다.' },
         { status: 401 }
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const { hashedPassword, ...userWithoutPassword } = user;
+    const { hashedPassword: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       user: {
