@@ -38,8 +38,6 @@ export interface LogContext {
   count?: number;
   cellCount?: number;
   personalSheetId?: string;
-  name?: string;
-  userName?: string;
   uncachedCellCount?: number;
   cellValue?: any;
   type?: string;
