@@ -92,7 +92,7 @@ export class GoogleSheetsClient {
       return await this.sheets.spreadsheets.values.update({
         spreadsheetId,
         range,
-        valueInputOption: 'RAW',
+        valueInputOption: 'USER_ENTERED',
         requestBody: {
           values,
         },
