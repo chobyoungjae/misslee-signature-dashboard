@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(clasp push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "mcp__smithery-sequential-thinking__sequentialthinking"
+    ],
+    "deny": []
+  }
+}
