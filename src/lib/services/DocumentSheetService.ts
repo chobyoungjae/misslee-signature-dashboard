@@ -196,7 +196,7 @@ export class DocumentSheetService {
 
       // L열(완료체크)을 TRUE로 설정
       const range = `L${rowIndex + 1}`;
-      await this.client.updateValues(sheetId, range, [['TRUE']]);
+      await this.client.updateValues(sheetId, range, [[true]]);
 
       // 웹훅 호출로 팀장보드에 알림
       await this.callWebhookForCompletion(sheetId, rowIndex + 1);
