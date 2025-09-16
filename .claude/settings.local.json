@@ -19,7 +19,8 @@
       "Read(/C:\\Users\\미쓰리\\.claude/**)",
       "Bash(npm run lint)",
       "Bash(npx next:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

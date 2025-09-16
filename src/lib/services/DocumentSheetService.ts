@@ -198,10 +198,121 @@ export class DocumentSheetService {
       const range = `L${rowIndex + 1}`;
       await this.client.updateValues(sheetId, range, [['TRUE']]);
 
+      // 웹훅 호출로 팀장보드에 알림
+      await this.callWebhookForCompletion(sheetId, rowIndex + 1);
+
       log.info(`Document marked as completed successfully - ID: ${documentId}, Row: ${rowIndex}`);
     } catch (error) {
       log.error(`Failed to mark document as completed - ID: ${documentId}`, error as Error);
       throw new Error('문서 완료 처리 중 오류가 발생했습니다.');
+    }
+  }
+
+  // 웹훅 호출 (팀장보드 알림용)
+  private async callWebhookForCompletion(sheetId: string, rowNumber: number): Promise<void> {
+    try {
+      // 먼저 현재 사용자 정보 가져오기 (sheetId로 사용자 찾기)
+      const userName = await this.getUserNameBySheetId(sheetId);
+      if (!userName) {
+        log.warn('User name not found for webhook', { sheetId, rowNumber });
+        return;
+      }
+
+      // 사용자별 웹훅 URL 가져오기 (문서ID 시트의 E열에 웹훅 URL 저장)
+      const webhookUrl = await this.getWebhookUrlByName(userName);
+      if (!webhookUrl) {
+        log.warn('Webhook URL not found', { userName });
+        return;
+      }
+
+      log.debug('Calling webhook for completion', { webhookUrl, userName });
+
+      // HTTP POST 요청으로 웹훅 호출
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sheetId: sheetId,
+          rowNumber: rowNumber,
+          userName: userName,
+          column: 12, // L열
+          value: true // 불린값으로 전송
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.text();
+        log.info('Webhook call successful', { result });
+      } else {
+        log.error('Webhook call failed', undefined, { status: response.status, statusText: response.statusText });
+      }
+    } catch (error) {
+      log.error('Webhook call error', error as Error, { sheetId, rowNumber });
+      // 웹훅 호출 실패는 치명적이지 않으므로 에러를 던지지 않음
+    }
+  }
+
+  // 사용자별 웹훅 URL 조회 (문서ID 시트의 E열)
+  private async getWebhookUrlByName(userName: string): Promise<string | null> {
+    try {
+      log.debug('Webhook URL search started', { userName });
+
+      // "문서ID" 시트에서 사용자 이름으로 웹훅 URL 검색
+      const rows = await this.client.getValues(this.client.getMainSpreadsheetId()!, '문서ID!A:E');
+      log.debug('Document ID sheet rows fetched for webhook URL search', { rowCount: rows.length, userName });
+
+      // 헤더 행 제외하고 검색
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const [documentId, name, spreadsheetId, scriptId, webhookUrl] = row;
+
+        log.debug('Processing webhook URL row', { rowIndex: i, name });
+
+        // 사용자 이름과 매칭
+        if (name === userName && webhookUrl) {
+          log.info('Webhook URL found', { userName, webhookUrl });
+          return webhookUrl;
+        }
+      }
+
+      log.warn('Webhook URL not found in document ID sheet', { userName });
+      return null;
+    } catch (error) {
+      log.error('Webhook URL search failed', error as Error, { userName });
+      return null;
+    }
+  }
+
+  // 스프레드시트 ID로 사용자 이름 찾기
+  private async getUserNameBySheetId(sheetId: string): Promise<string | null> {
+    try {
+      log.debug('User name search by sheet ID started', { sheetId });
+
+      // "회원정보" 시트에서 스프레드시트 ID로 사용자 이름 검색
+      const rows = await this.client.getValues(this.client.getMainSpreadsheetId()!, '회원정보!A:E');
+      log.debug('Member info sheet rows fetched for user search', { rowCount: rows.length, sheetId });
+
+      // 헤더 행 제외하고 검색
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const [employeeNumber, name, personalSheetId, username, email] = row;
+
+        log.debug('Processing member row for sheet ID match', { rowIndex: i, personalSheetId, name });
+
+        // 개인 스프레드시트 ID와 매칭
+        if (personalSheetId === sheetId) {
+          log.info('User name found by sheet ID', { sheetId, userName: name });
+          return name;
+        }
+      }
+
+      log.warn('User name not found by sheet ID', { sheetId });
+      return null;
+    } catch (error) {
+      log.error('User name search by sheet ID failed', error as Error, { sheetId });
+      return null;
     }
   }
 
