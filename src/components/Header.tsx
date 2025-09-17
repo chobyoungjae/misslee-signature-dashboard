@@ -25,9 +25,11 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* 로고 및 제목 */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">📝</span>
-            </div>
+            <img
+              src="/ver2.ico"
+              alt="로고"
+              className="w-8 h-8"
+            />
             <h1 className="text-xl font-bold text-gray-900">
               서명 대시보드 - {user?.name}
             </h1>
@@ -46,50 +48,14 @@ export const Header: React.FC = () => {
               </button>
             )}
 
-            {/* 새로고침 버튼 */}
-            <button
-              onClick={handleRefresh}
-              className="hidden sm:flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              title="새로고침"
-            >
-              <span className="text-lg">🔄</span>
-              <span>새로고침</span>
-            </button>
-
-            {/* 모바일 새로고침 버튼 */}
-            <button
-              onClick={handleRefresh}
-              className="sm:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              title="새로고침"
-            >
-              <span className="text-lg">🔄</span>
-            </button>
 
             {/* 로그아웃 버튼 */}
             <button
               onClick={handleLogout}
-              className="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
               title="로그아웃"
             >
-              <img 
-                src="/logout-icon.png" 
-                alt="로그아웃" 
-                className="w-5 h-5"
-              />
               <span>로그아웃</span>
-            </button>
-
-            {/* 모바일 로그아웃 버튼 */}
-            <button
-              onClick={handleLogout}
-              className="sm:hidden p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-              title="로그아웃"
-            >
-              <img 
-                src="/logout-icon.png" 
-                alt="로그아웃" 
-                className="w-5 h-5"
-              />
             </button>
           </div>
         </div>

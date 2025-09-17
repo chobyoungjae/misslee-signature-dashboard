@@ -84,14 +84,6 @@ export default function DashboardPage() {
           </>
         )}
 
-        {/* 플로팅 새로고침 버튼 (모바일) */}
-        <button
-          onClick={refreshDocuments}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors sm:hidden"
-          title="새로고침"
-        >
-          <span className="text-xl">🔄</span>
-        </button>
       </main>
     </div>
   );
