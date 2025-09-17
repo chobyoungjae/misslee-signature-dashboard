@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
-// PDF.js worker 설정
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// PDF.js worker 설정 - 안정적인 CDN 사용
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface PDFViewerProps {
   fileId: string;
@@ -18,18 +18,48 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
   const [error, setError] = useState<string>('');
   const [scale, setScale] = useState<number>(1.0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  
-  // 모바일 감지를 위한 useEffect
-  React.useEffect(() => {
+  const [useFallback, setUseFallback] = useState<boolean>(false);
+
+  // 모바일 감지 및 fallback 결정
+  useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+
+      // 모바일에서만 iframe 사용 (PC는 그대로 유지)
+      if (mobile) {
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isIOS = /iphone|ipad|ipod/.test(userAgent);
+        const isAndroid = /android/.test(userAgent);
+
+        // 모바일 기기에서는 바로 iframe 사용
+        if (isIOS || isAndroid) {
+          setUseFallback(true);
+          setLoading(false);
+        }
+      } else {
+        // PC에서는 항상 react-pdf 사용
+        setUseFallback(false);
+      }
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+
+    // 모바일에서만 로딩 타임아웃 설정 - 3초 후 자동으로 iframe 전환
+    const timeout = setTimeout(() => {
+      if (loading && isMobile) {
+        console.log('모바일 PDF 로딩 타임아웃, iframe으로 전환');
+        setUseFallback(true);
+        setLoading(false);
+      }
+    }, 3000);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      clearTimeout(timeout);
+    };
+  }, [loading, isMobile]);
 
   // Google Drive PDF 미리보기 URL (여러 방법 시도)
   const pdfUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -40,14 +70,22 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
   const proxyUrl = `/api/pdf-proxy?fileId=${fileId}`;
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    console.log('PDF 로드 성공, 페이지 수:', numPages);
     setNumPages(numPages);
     setLoading(false);
     setError('');
+    setUseFallback(false);
   }
 
   function onDocumentLoadError(error: Error) {
     console.error('PDF 로드 오류:', error);
-    setError('PDF 파일을 불러올 수 없습니다.');
+    // 모바일에서는 바로 iframe으로 전환
+    if (isMobile) {
+      setUseFallback(true);
+      setError('');
+    } else {
+      setError('PDF 파일을 불러올 수 없습니다.');
+    }
     setLoading(false);
   }
 
@@ -67,18 +105,28 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
     setScale(prev => Math.max(prev - 0.2, 0.5));
   };
 
-  if (error) {
+  // 모바일이나 fallback 모드에서는 iframe 사용
+  if (useFallback || error) {
     return (
       <div className="space-y-4">
+        <div className="bg-gray-100 p-2 md:p-4 rounded-t border">
+          <div className="flex items-center justify-between">
+            <span className="text-xs md:text-sm font-medium text-gray-700 truncate">{title}</span>
+            <span className="text-xs text-gray-500">
+              {isMobile ? '모바일 뷰어' : 'PDF 미리보기'}
+            </span>
+          </div>
+        </div>
         {/* Google Drive iframe 임베드 */}
-        <div className="bg-white border rounded">
+        <div className="bg-white border border-t-0 rounded-b">
           <div className="p-2 md:p-4">
             <iframe
               src={embedUrl}
-              className="w-full h-[585px] md:h-[680px] border border-gray-300 rounded"
+              className="w-full h-[500px] md:h-[680px] border border-gray-300 rounded"
               title="PDF 문서 미리보기"
               frameBorder="0"
               allowFullScreen
+              loading="lazy"
             />
           </div>
         </div>
