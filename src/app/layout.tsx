@@ -14,13 +14,42 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "서명 대시보드",
-  description: "개인 서명 대시보드 앱",
+  title: "미쓰리 서명앱",
+  description: "미쓰리 서명 대시보드 - 간편한 문서 서명 관리 앱",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/ver2.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/ver2.ico", sizes: "16x16", type: "image/x-icon" }
+    ],
+    apple: "/ver2.ico"
+  },
+  openGraph: {
+    type: "website",
+    title: "미쓰리 서명앱",
+    description: "간편한 문서 서명 관리 앱 - 미쓰리 서명 대시보드",
+    url: "https://misslee-signature-dashboard.vercel.app",
+    siteName: "미쓰리 서명앱",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "미쓰리 서명앱 로고"
+      }
+    ],
+    locale: "ko_KR"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "미쓰리 서명앱",
+    description: "간편한 문서 서명 관리 앱",
+    images: ["/og-image.png"]
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "서명 대시보드"
+    title: "미쓰리 서명앱"
   },
 };
 

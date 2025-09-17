@@ -49,7 +49,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = fals
             />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">로그인</h2>
-          <p className="mt-2 text-sm text-gray-600">서명 대시보드에 로그인하세요</p>
+          <p className="mt-2 text-sm text-gray-600">미쓰리 서명앱에 로그인하세요</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

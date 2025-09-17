@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
               className="w-8 h-8"
             />
             <h1 className="text-xl font-bold text-gray-900">
-              서명 대시보드 - {user?.name}
+              미쓰리 서명앱 - {user?.name}
             </h1>
           </div>
 

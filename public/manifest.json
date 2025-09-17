@@ -1,7 +1,7 @@
 {
-  "name": "서명 대시보드",
-  "short_name": "서명앱",
-  "description": "개인 서명 대시보드 PWA 앱",
+  "name": "미쓰리 서명앱",
+  "short_name": "미쓰리 서명앱",
+  "description": "미쓰리 서명 대시보드 - 간편한 문서 서명 관리 앱",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
