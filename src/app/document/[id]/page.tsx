@@ -4,7 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Document } from '@/types';
-import PDFViewer from '@/components/PDFViewer';
+import dynamic from 'next/dynamic';
+
+// PDFViewer를 동적 임포트로 변경 (SSR 비활성화)
+const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-[500px]">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 text-sm">PDF 뷰어 로딩 중...</p>
+      </div>
+    </div>
+  ),
+});
 
 export default function DocumentDetailPage() {
   const params = useParams();

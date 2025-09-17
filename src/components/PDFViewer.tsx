@@ -22,13 +22,16 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
 
   // 모바일 감지 및 fallback 결정
   useEffect(() => {
+    // 클라이언트 사이드에서만 실행
+    if (typeof window === 'undefined') return;
+
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
       // 모바일에서만 iframe 사용 (PC는 그대로 유지)
       if (mobile) {
-        const userAgent = navigator.userAgent.toLowerCase();
+        const userAgent = navigator?.userAgent?.toLowerCase() || '';
         const isIOS = /iphone|ipad|ipod/.test(userAgent);
         const isAndroid = /android/.test(userAgent);
 
