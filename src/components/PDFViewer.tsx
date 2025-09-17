@@ -157,7 +157,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
           {isMobile && (
             <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
               <p className="text-xs text-blue-800">
-                💡 모바일 팁: "Google Drive에서 보기" 버튼이 가장 확실합니다!
+                💡 모바일 팁: &quot;Google Drive에서 보기&quot; 버튼이 가장 확실합니다!
               </p>
             </div>
           )}
