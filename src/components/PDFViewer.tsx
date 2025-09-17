@@ -24,48 +24,60 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ fileId, title = 'PDF 문서' }) =
   // PC용 임베드 URL
   const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
 
-  // 모바일에서는 심플한 버튼 UI
+  // 프록시 URL (Service Account 사용)
+  const proxyUrl = `/api/pdf-proxy?fileId=${fileId}`;
+
+  // 모바일에서는 프록시 URL을 통한 미리보기 시도
   if (isMobile) {
     return (
       <div className="pdf-viewer space-y-4">
         <div className="bg-white rounded-lg border shadow-sm">
           <div className="bg-gray-100 p-4 rounded-t border-b">
-            <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+              <a
+                href={viewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:text-blue-700 underline"
+              >
+                새 탭에서 열기
+              </a>
+            </div>
           </div>
 
-          <div className="p-6 text-center">
-            <div className="mb-6">
-              <svg
-                className="w-20 h-20 text-gray-400 mx-auto mb-4"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-              </svg>
-              <p className="text-gray-600 text-sm mb-2">
-                PDF 문서를 보려면 아래 버튼을 클릭하세요
-              </p>
-              <p className="text-gray-500 text-xs">
-                모바일에서는 새 탭에서 열립니다
-              </p>
-            </div>
+          <div className="p-4">
+            {/* 모바일용 embed 태그 */}
+            <embed
+              src={proxyUrl}
+              type="application/pdf"
+              className="w-full h-[400px] border border-gray-300 rounded"
+              style={{ minHeight: '400px' }}
+            />
 
-            <a
-              href={viewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
-            >
-              📄 PDF 문서 보기
-            </a>
-
-            <div className="mt-4">
-              <a
-                href={`https://drive.google.com/uc?export=download&id=${fileId}`}
-                className="text-sm text-gray-600 hover:text-gray-800 underline"
-              >
-                PDF 다운로드
-              </a>
+            {/* 미리보기가 안 될 경우를 위한 대체 버튼 */}
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500 mb-2">
+                미리보기가 표시되지 않나요?
+              </p>
+              <div className="flex justify-center gap-2">
+                <a
+                  href={proxyUrl}
+                  download
+                  className="text-sm text-gray-600 hover:text-gray-800 underline"
+                >
+                  PDF 다운로드
+                </a>
+                <span className="text-gray-400">|</span>
+                <a
+                  href={viewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-700 underline"
+                >
+                  Google Drive에서 보기
+                </a>
+              </div>
             </div>
           </div>
         </div>
