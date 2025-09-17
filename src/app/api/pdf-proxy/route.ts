@@ -38,8 +38,11 @@ export async function GET(request: NextRequest) {
 
       console.log('PDF 다운로드 성공');
 
+      // response.data를 Buffer로 변환
+      const pdfData = response.data as ArrayBuffer;
+
       // PDF 응답 반환
-      return new NextResponse(response.data, {
+      return new NextResponse(pdfData, {
         status: 200,
         headers: {
           'Content-Type': 'application/pdf',
